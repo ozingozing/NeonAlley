@@ -14,6 +14,7 @@
 #include "CameraClass.h"
 #include "ModelClass.h"
 #include "TextureShaderClass.h"
+#include "RenderTextureClass.h"
 #include "PositionClass.h"
 #include "TimerClass.h"
 
@@ -56,5 +57,6 @@ private:
 	TextureShaderClass* m_TextureShader;
     ModelClass* m_FloorModel, * m_BillboardModel;
 	TimerClass* m_Timer;
+    RenderTextureClass* m_SceneRT;
 };
 #endif

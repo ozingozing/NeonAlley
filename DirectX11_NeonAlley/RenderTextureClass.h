@@ -17,6 +17,11 @@ using namespace DirectX;
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: RenderTextureClass
 ////////////////////////////////////////////////////////////////////////////////
+enum RenderTextureFormat
+{
+    RT_FORMAT_LDR = 1,   // R8G8B8A8_UNORM
+    RT_FORMAT_HDR = 2,   // R16G16B16A16_FLOAT
+};
 class RenderTextureClass
 {
 public:
@@ -25,7 +30,7 @@ public:
     ~RenderTextureClass();
 
     bool Initialize(ID3D11Device* device, int width, int height,
-        float screenDepth, float screenNear, int format);
+        float screenDepth, float screenNear, RenderTextureFormat format);
     void Shutdown();
 
     void SetRenderTarget(ID3D11DeviceContext* context);      // 그리기 목적지를 이 텍스처로

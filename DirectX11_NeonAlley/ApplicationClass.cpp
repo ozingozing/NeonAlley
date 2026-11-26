@@ -11,6 +11,7 @@ ApplicationClass::ApplicationClass()
 	m_FloorModel = 0;
 	m_BillboardModel = 0;
 	m_Timer = 0;
+	m_SceneRT = 0;
 }
 
 
@@ -92,6 +93,15 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
+	// Create and initialize the render to texture object.
+	m_SceneRT = new RenderTextureClass;
+	result = m_SceneRT->Initialize(m_Direct3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR, RenderTextureFormat::RT_FORMAT_HDR);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the render to texture object.", L"Error", MB_OK);
+		return false;
+	}
+
 	// Create and initialize the timer object.
 	m_Timer = new TimerClass;
 	m_Timer->Initialize();
@@ -107,6 +117,13 @@ void ApplicationClass::Shutdown()
 	{
 		delete m_Timer;
 		m_Timer = 0;
+	}
+
+	if(m_SceneRT)
+	{
+		m_SceneRT->Shutdown();
+		delete m_SceneRT;
+		m_SceneRT = 0;
 	}
 
 	// Release the billboard model object.
@@ -237,6 +254,10 @@ bool ApplicationClass::Render()
 
 	// Clear the buffers to begin the scene.
 	m_Direct3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
+
+	// 장면을 HDR 텍스처에 그린다
+	/*m_SceneRT->SetRenderTarget(m_Direct3D->GetDeviceContext());
+	m_SceneRT->ClearRenderTarget(m_Direct3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);*/
 
 	// Get the world, view, and projection matrices from the camera and d3d objects.
 	m_Direct3D->GetWorldMatrix(worldMatrix);

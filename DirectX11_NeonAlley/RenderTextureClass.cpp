@@ -32,7 +32,7 @@ RenderTextureClass::~RenderTextureClass()
 // 원근 렌더링을 위해 투영(Projection) 및 직교(Ortho) 매트릭스를 생성합니다.
 // 텍스처가 사용될 곳의 종횡비(가로세로 비율)와 이 렌더 투 텍스처의 종횡비를 항상 일치시켜야
 // 함을 유념하세요. 그렇지 않으면 크기 왜곡이 발생할 수 있습니다.
-bool RenderTextureClass::Initialize(ID3D11Device* device, int textureWidth, int textureHeight, float screenDepth, float screenNear, int format)
+bool RenderTextureClass::Initialize(ID3D11Device* device, int textureWidth, int textureHeight, float screenDepth, float screenNear, RenderTextureFormat format)
 {
     D3D11_TEXTURE2D_DESC textureDesc;
     HRESULT result;
@@ -45,11 +45,16 @@ bool RenderTextureClass::Initialize(ID3D11Device* device, int textureWidth, int 
     // 텍스처 형식을 설정합니다.
     switch (format)
     {
-        case 1:
+        case RT_FORMAT_LDR:
         {
             textureFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
             break;
         }
+        case RT_FORMAT_HDR:
+        {
+            textureFormat = DXGI_FORMAT_R16G16B16A16_FLOAT;
+            break;
+		}
         default:
         {
             textureFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
