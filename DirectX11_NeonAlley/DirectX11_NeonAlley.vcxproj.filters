@@ -135,6 +135,9 @@
     <ClCompile Include="FireShaderClass.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="ToneMapShaderClass.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Systemclass.h">
@@ -254,6 +257,9 @@
     <ClInclude Include="FireShaderClass.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="ToneMapShaderClass.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Color.hlsl">
@@ -308,6 +314,9 @@
       <Filter>HLSL</Filter>
     </FxCompile>
     <FxCompile Include="Fire.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="ToneMap.hlsl">
       <Filter>HLSL</Filter>
     </FxCompile>
   </ItemGroup>

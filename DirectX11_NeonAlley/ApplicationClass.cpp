@@ -12,6 +12,7 @@ ApplicationClass::ApplicationClass()
 	m_BillboardModel = 0;
 	m_Timer = 0;
 	m_SceneRT = 0;
+	m_ToneMapShader = 0;
 }
 
 
@@ -102,6 +103,15 @@ bool ApplicationClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
+	// Create and initialize the tone map shader object.
+	m_ToneMapShader = new ToneMapShaderClass;
+	result = m_ToneMapShader->Initialize(m_Direct3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the tone map shader object.", L"Error", MB_OK);
+		return false;
+	}
+
 	// Create and initialize the timer object.
 	m_Timer = new TimerClass;
 	m_Timer->Initialize();
@@ -119,7 +129,14 @@ void ApplicationClass::Shutdown()
 		m_Timer = 0;
 	}
 
-	if(m_SceneRT)
+	if (m_ToneMapShader)
+	{
+		m_ToneMapShader->Shutdown();
+		delete m_ToneMapShader;
+		m_ToneMapShader = 0;
+	}
+
+	if (m_SceneRT)
 	{
 		m_SceneRT->Shutdown();
 		delete m_SceneRT;
@@ -256,8 +273,8 @@ bool ApplicationClass::Render()
 	m_Direct3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 
 	// 장면을 HDR 텍스처에 그린다
-	/*m_SceneRT->SetRenderTarget(m_Direct3D->GetDeviceContext());
-	m_SceneRT->ClearRenderTarget(m_Direct3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);*/
+	m_SceneRT->SetRenderTarget(m_Direct3D->GetDeviceContext());
+	m_SceneRT->ClearRenderTarget(m_Direct3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
 
 	// Get the world, view, and projection matrices from the camera and d3d objects.
 	m_Direct3D->GetWorldMatrix(worldMatrix);
@@ -304,6 +321,21 @@ bool ApplicationClass::Render()
 		m_BillboardModel->GetIndexCount(),
 		worldMatrix, viewMatrix, projectionMatrix,
 		m_BillboardModel->GetTexture());
+	if (!result)
+	{
+		return false;
+	}
+
+	// ===== 전체 화면 패스: HDR 텍스처 → 백버퍼 =====
+	// 그릴 곳을 다시 백버퍼로 되돌리고 뷰포트도 화면 크기로 되돌립니다.
+	m_Direct3D->SetBackBufferRenderTarget();
+	m_Direct3D->ResetViewport();
+
+	// 전체 화면 삼각형은 가림 판단이 필요 없으므로 깊이 버퍼를 끕니다.
+	m_Direct3D->TurnZBufferOff();
+
+	// Tone map the rendered scene.
+	result = m_ToneMapShader->Render(m_Direct3D->GetDeviceContext(), m_SceneRT->GetShaderResourceView());
 	if (!result)
 	{
 		return false;

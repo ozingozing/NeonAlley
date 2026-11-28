@@ -12,6 +12,7 @@
 #include "D3DClass.h"
 #include "InputClass.h"
 #include "CameraClass.h"
+#include "ToneMapShaderClass.h"
 #include "ModelClass.h"
 #include "TextureShaderClass.h"
 #include "RenderTextureClass.h"
@@ -58,5 +59,6 @@ private:
     ModelClass* m_FloorModel, * m_BillboardModel;
 	TimerClass* m_Timer;
     RenderTextureClass* m_SceneRT;
+	ToneMapShaderClass* m_ToneMapShader;
 };
 #endif
